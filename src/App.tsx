@@ -108,7 +108,7 @@ export default function App() {
   useEffect(() => {
     axios
       .get(
-        'http://api.ipstack.com/check?access_key=ad9384cc321c8cd2cf228b34cb94db82'
+        'https://api.ipstack.com/check?access_key=ad9384cc321c8cd2cf228b34cb94db82'
       )
       .then((response) => {
         setLocation(response.data);
