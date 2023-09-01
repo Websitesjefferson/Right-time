@@ -18,6 +18,11 @@ export const Container = styled.aside`
 
   }
 `;
+export const ContainerInput = styled.div`
+
+
+
+`
 export const InputSearch = styled.input`
 
    width: 50%;

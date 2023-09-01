@@ -82,7 +82,7 @@ export default function App() {
 
   async function handleSearchSubmit() {
     try {
-      const cityResponse = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${searchCity}&appid=${API_KEY}`);
+      const cityResponse = await api.get(`/data/2.5/weather?q=${searchCity}&appid=${API_KEY}`);
       
       if (cityResponse.data.coord) {
         const { lat, lon } = cityResponse.data.coord;
@@ -141,7 +141,7 @@ export default function App() {
           console.error('Error fetching weather data:', error);
         });
     }
-    handleSearchSubmit()
+    
     
 
   }, [location.latitude, location.longitude, searchCity]);
