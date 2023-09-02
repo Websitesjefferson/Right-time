@@ -1,5 +1,6 @@
 import { MdPlace } from 'react-icons/md';
-import { City, Container, WeatherInfo, InputSearch } from './styles';
+import { PiMagnifyingGlass } from  'react-icons/pi'
+import { City, Container, WeatherInfo, InputSearch, ContainerInput } from './styles';
 import { format, fromUnixTime } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import Logo from '../../assets/TempoCerto.png';
@@ -20,6 +21,7 @@ interface SidebarProps {
       icon: string;
     }[];
   };
+ 
   searchCityDelayed: string
   searchCity: string; // Adicione a prop searchCity
   handleSearchInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void; // Adicione a prop handleSearchInputChange
@@ -34,15 +36,21 @@ function Sidebar({searchCityDelayed, city, currentWeather, searchCity, handleSea
   return (
     <Container>
       <img src={Logo} alt="" />
-      
-      
+     
+      <ContainerInput>
       <InputSearch
         placeholder='Pesquisar por cidade'
         value={searchCity}
         onChange={handleSearchInputChange}
-        onSubmit={handleSearchSubmit}
+        
       />
-     
+       <button onClick={handleSearchSubmit}>
+         <PiMagnifyingGlass size={25}/> <span>Pesquisar</span>
+       </button> 
+      
+
+
+     </ContainerInput>
       <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
         <City>
           <MdPlace size={24} />

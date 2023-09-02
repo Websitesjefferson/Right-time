@@ -19,20 +19,34 @@ export const Container = styled.aside`
   }
 `;
 export const ContainerInput = styled.div`
+   width: 45%;
+   display: flex;
+   padding: 6px;
+   border-radius: 10px;
+   background: #a09fb1;
+   
+   margin-inline: 20px;
 
+  button{
+    display: flex;
+    align-items: center;
+    background: transparent;
+    opacity: .5;
+    transition: 300ms ease;
+  }
+  button:hover{
+    opacity: .9;
+  }
 
+  
 
 `
 export const InputSearch = styled.input`
-
-   width: 50%;
-   padding: 10px;
-   border-radius: 10px;
-   background: #a09fb1;
+   width: 100%;
+   background: transparent;
    outline: none;
-   border: none;
-   margin-inline: 20px;
-
+   border: none;  
+   padding: 6px;
 `
 
 

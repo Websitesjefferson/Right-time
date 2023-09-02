@@ -4,7 +4,10 @@ import Sidebar from './components/Sidebar';
 import { WeatherDetails } from './components/WeatherDetails';
 import { WeatherStateList } from './components/WeatherStateList';
 import { api } from './services/api';
-
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
+import { ThreeCircles } from 'react-loader-spinner'
 
 import { Main, Section } from './styles';
 import GlobalStyles from './styles/global';
@@ -64,7 +67,7 @@ export default function App() {
 
   const API_KEY = '9fd4363e87a12017542d3fd6ac228d52';
 
- 
+
 
   const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
@@ -84,6 +87,13 @@ export default function App() {
 
   async function handleSearchSubmit() {
     try {
+      if (searchCity.trim() === '') {
+        toast.error('Por favor, insira uma cidade para pesquisar.', {
+          position: 'top-center', // Posição da notificação
+          autoClose: 1700, // Tempo que a notificação ficará visível em milissegundos (opcional)
+        });
+        return;
+      }
       const cityResponse = await api.get(`/data/2.5/weather?q=${searchCity}&appid=${API_KEY}`);
 
       if (cityResponse.data.coord) {
@@ -98,32 +108,36 @@ export default function App() {
         );
         setSearchByCity(response.data);
 
+        // Reset the error state if the search is successful
+
       } else {
-        console.error('City not found');
+        // City not found, set the error state to true
+
       }
     } catch (error) {
+
       console.error('Error fetching weather data:', error);
+
+      // Handle other errors here if needed
     }
   }
-
-
   useEffect(() => {
     axios.get('https://ipinfo.io/json?token=19fe29175dd341')
-    .then(response => {
-      const city = response.data.city;
-      const coordinates = response.data.loc;
-      const parts = coordinates.split(',');
+      .then(response => {
+        const city = response.data.city;
+        const coordinates = response.data.loc;
+        const parts = coordinates.split(',');
 
-      const latitude = parts[0]; // Obtenha a primeira parte (latitude)
-      const longitude = parts[1]; // Obtenha a segunda parte (longitude)
-      const data = { latitude, longitude, city }
+        const latitude = parts[0]; // Obtenha a primeira parte (latitude)
+        const longitude = parts[1]; // Obtenha a segunda parte (longitude)
+        const data = { latitude, longitude, city }
 
 
-      setLocation(data);
-    })
-    .catch(error => {
-      console.error('IP:', error);
-    });
+        setLocation(data);
+      })
+      .catch(error => {
+        console.error('IP:', error);
+      });
 
     if (location.latitude && location.longitude) {
       api
@@ -154,10 +168,6 @@ export default function App() {
 
 
   }, [location.latitude, location.longitude, searchCity]);
-
-
-
-
   return (
     <>
       <GlobalStyles />
@@ -165,6 +175,7 @@ export default function App() {
         {dataLoaded ? (
           <>
             <Sidebar
+
               searchCityDelayed={searchCityDelayed}
               city={location.city}
               currentWeather={searchByCity.current || weather.current}
@@ -203,13 +214,29 @@ export default function App() {
 
 
             )}
+            < InteractiveMap latitude={cityLatitude || location.latitude} longitude={cityLongitude || location.longitude} />
+
           </>
 
         ) : (
-          <div>Loading...</div>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+           <ThreeCircles
+  height="60"
+  width="60"
+  color="#51E5FF"
+  wrapperStyle={{}}
+  wrapperClass=""
+  visible={true}
+  ariaLabel="three-circles-rotating"
+  outerCircleColor=""
+  innerCircleColor=""
+  middleCircleColor=""
+/>
+          </div>
+
         )}
 
-        < InteractiveMap latitude={cityLatitude || location.latitude} longitude={cityLongitude || location.longitude} />
+        <ToastContainer />
 
       </Main>
     </>
