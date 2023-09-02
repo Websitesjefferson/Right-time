@@ -55,7 +55,7 @@ function Sidebar({searchCityDelayed, city, currentWeather, searchCity, handleSea
         <City>
           <MdPlace size={24} />
           <p>{searchCityDelayed || city}</p>
-          <p>{formattedDate}</p>
+          <span>{formattedDate}</span>
         </City>
 
         <WeatherInfo>
