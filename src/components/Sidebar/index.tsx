@@ -1,5 +1,5 @@
 import { MdPlace } from 'react-icons/md';
-import { City, Container, WeatherInfo, InputSearch, ContainerInput } from './styles';
+import { City, Container, WeatherInfo, InputSearch } from './styles';
 import { format, fromUnixTime } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import Logo from '../../assets/TempoCerto.png';
@@ -35,15 +35,14 @@ function Sidebar({searchCityDelayed, city, currentWeather, searchCity, handleSea
     <Container>
       <img src={Logo} alt="" />
       
-      <ContainerInput>
+      
       <InputSearch
         placeholder='Pesquisar por cidade'
         value={searchCity}
         onChange={handleSearchInputChange}
-        
+        onSubmit={handleSearchSubmit}
       />
-        <button onClick={handleSearchSubmit}></button>
-     </ContainerInput>
+     
       <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
         <City>
           <MdPlace size={24} />

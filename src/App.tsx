@@ -64,6 +64,8 @@ export default function App() {
 
   const API_KEY = '9fd4363e87a12017542d3fd6ac228d52';
 
+ 
+
   const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
     setSearchCity(inputValue);
@@ -83,19 +85,19 @@ export default function App() {
   async function handleSearchSubmit() {
     try {
       const cityResponse = await api.get(`/data/2.5/weather?q=${searchCity}&appid=${API_KEY}`);
-      
+
       if (cityResponse.data.coord) {
         const { lat, lon } = cityResponse.data.coord;
-        
+
         // Atualize os estados com a latitude e longitude da cidade
         setCityLatitude(lat);
         setCityLongitude(lon);
-        
+
         const response = await api.get(
           `/data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&exclude=minutely,hourly,alerts&appid=${API_KEY}`
         );
         setSearchByCity(response.data);
-        console.log(response.data);
+
       } else {
         console.error('City not found');
       }
@@ -103,19 +105,25 @@ export default function App() {
       console.error('Error fetching weather data:', error);
     }
   }
-  
+
 
   useEffect(() => {
-    axios
-      .get(
-        'https://api.ipstack.com/check?access_key=ad9384cc321c8cd2cf228b34cb94db82'
-      )
-      .then((response) => {
-        setLocation(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching location:', error);
-      });
+    axios.get('https://ipinfo.io/json?token=19fe29175dd341')
+    .then(response => {
+      const city = response.data.city;
+      const coordinates = response.data.loc;
+      const parts = coordinates.split(',');
+
+      const latitude = parts[0]; // Obtenha a primeira parte (latitude)
+      const longitude = parts[1]; // Obtenha a segunda parte (longitude)
+      const data = { latitude, longitude, city }
+
+
+      setLocation(data);
+    })
+    .catch(error => {
+      console.error('IP:', error);
+    });
 
     if (location.latitude && location.longitude) {
       api
@@ -124,6 +132,7 @@ export default function App() {
         )
         .then((response) => {
           setWeatherState(response.data);
+
         })
         .catch((error) => {
           console.error('Error fetching weather data:', error);
@@ -141,8 +150,8 @@ export default function App() {
           console.error('Error fetching weather data:', error);
         });
     }
-    
-    
+
+
 
   }, [location.latitude, location.longitude, searchCity]);
 
@@ -192,16 +201,16 @@ export default function App() {
                 />
               </Section>
 
-              
+
             )}
           </>
-          
+
         ) : (
           <div>Loading...</div>
         )}
 
         < InteractiveMap latitude={cityLatitude || location.latitude} longitude={cityLongitude || location.longitude} />
-      
+
       </Main>
     </>
   );
