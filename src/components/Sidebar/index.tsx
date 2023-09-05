@@ -1,5 +1,5 @@
 import { MdPlace } from 'react-icons/md';
-import { PiMagnifyingGlass } from  'react-icons/pi'
+import { PiMagnifyingGlass } from 'react-icons/pi'
 import { City, Container, WeatherInfo, InputSearch, ContainerInput } from './styles';
 import { format, fromUnixTime } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
@@ -21,14 +21,15 @@ interface SidebarProps {
       icon: string;
     }[];
   };
- 
+  dataLoaded: boolean
   searchCityDelayed: string
   searchCity: string; // Adicione a prop searchCity
   handleSearchInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void; // Adicione a prop handleSearchInputChange
   handleSearchSubmit: () => void; // Adicione a prop handleSearchSubmit
 }
 
-function Sidebar({searchCityDelayed, city, currentWeather, searchCity, handleSearchInputChange, handleSearchSubmit }: SidebarProps) {
+function Sidebar({ searchCityDelayed, city, currentWeather, searchCity, dataLoaded, handleSearchInputChange, handleSearchSubmit }: SidebarProps) {
+ 
   const formattedCurrentWeather = Math.floor(currentWeather.temp);
 
   const formattedDate = format(fromUnixTime(currentWeather.dt), 'EEE, dd LLL', { locale: ptBR });
@@ -36,25 +37,30 @@ function Sidebar({searchCityDelayed, city, currentWeather, searchCity, handleSea
   return (
     <Container>
       <img src={Logo} alt="" />
-     
+
       <ContainerInput>
-      <InputSearch
-        placeholder='Pesquisar por cidade'
-        value={searchCity}
-        onChange={handleSearchInputChange}
-        
-      />
-       <button onClick={handleSearchSubmit}>
-         <PiMagnifyingGlass size={25}/> <span>Pesquisar</span>
-       </button> 
-      
+        <InputSearch
+          placeholder='Pesquisar por cidade'
+          value={searchCity}
+          onChange={handleSearchInputChange}
+
+        />
+        {dataLoaded ? (
+          <button onClick={handleSearchSubmit}>
+            <PiMagnifyingGlass size={25} /> <span>Pesquisar</span>
+          </button>) : (
+          <div >Carregando...</div>
+        )}
 
 
-     </ContainerInput>
+
+      </ContainerInput>
       <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
         <City>
           <MdPlace size={24} />
+          <div>
           <p>{searchCityDelayed || city}</p>
+          </div>
           <span>{formattedDate}</span>
         </City>
 

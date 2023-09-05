@@ -15,9 +15,12 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ latitude, longit
       if (mapRef.current === null) {
         // Se o mapa ainda não foi inicializado, crie-o
         const newMap = L.map('map').setView([latitude, longitude], 13);
+
+        // Adicione uma camada de visualização de satélite gratuita do OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         }).addTo(newMap);
+
         mapRef.current = newMap;
       } else {
         // Se o mapa já foi inicializado, apenas atualize a visualização

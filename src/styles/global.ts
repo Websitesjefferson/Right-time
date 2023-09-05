@@ -13,6 +13,7 @@ body{
   font: 16px "Raleway", Arial, sans-serif;
   color: #E7E7EB;
   background: #100e1d;
+  text-transform: capitalize;
 }
 
 button{

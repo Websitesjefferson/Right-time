@@ -19,10 +19,28 @@ export const Section = styled.section`
   flex-direction: column;
  
   header {
-    display: flex;
+    display: flex; 
     gap: 0.75rem;
-    align-items: start;
+    align-items: center;
     margin-bottom: 4.125rem;
+    justify-content: space-between;
+    
+    div{
+      display: flex; 
+      gap: 5px
+
+      span{
+        display: flex;
+        flex-direction: row;
+      }
+    }
+  }
+
+  @media (max-width: 600px) {
+    header{
+      flex-direction: column; 
+    }
+    
   }
 `;
 

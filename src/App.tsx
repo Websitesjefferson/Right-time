@@ -65,6 +65,11 @@ export default function App() {
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
 
 
+  const [sunrise, setSunrise] = useState('');
+  const [sunset, setSunset] = useState('');
+
+
+
   const API_KEY = '9fd4363e87a12017542d3fd6ac228d52';
 
 
@@ -86,7 +91,9 @@ export default function App() {
   };
 
   async function handleSearchSubmit() {
+
     try {
+
       if (searchCity.trim() === '') {
         toast.error('Por favor, insira uma cidade para pesquisar.', {
           position: 'top-center', // Posição da notificação
@@ -103,17 +110,31 @@ export default function App() {
         setCityLatitude(lat);
         setCityLongitude(lon);
 
+        // Faça uma chamada à API do OpenWeatherMap para obter informações sobre o nascer e pôr do sol
+        const sunriseSunsetResponse = await api.get(`/data/2.5/weather?q=${searchCity}&appid=${API_KEY}`);
+
+        if (sunriseSunsetResponse.data.sys) {
+          const sunriseTimestamp = sunriseSunsetResponse.data.sys.sunrise;
+          const sunsetTimestamp = sunriseSunsetResponse.data.sys.sunset;
+
+          // Converta os timestamps em horários legíveis
+          const sunriseTime = new Date(sunriseTimestamp * 1000).toLocaleTimeString();
+          const sunsetTime = new Date(sunsetTimestamp * 1000).toLocaleTimeString();
+
+          // Atualize os estados com os horários do nascer e pôr do sol
+          setSunrise(sunriseTime);
+          setSunset(sunsetTime);
+        }
+
         const response = await api.get(
           `/data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&exclude=minutely,hourly,alerts&appid=${API_KEY}`
         );
         setSearchByCity(response.data);
 
         // Reset the error state if the search is successful
-
-      } else {
-        // City not found, set the error state to true
-
+        setDataLoaded(true);
       }
+
     } catch (error) {
 
       console.error('Error fetching weather data:', error);
@@ -122,6 +143,7 @@ export default function App() {
     }
   }
   useEffect(() => {
+
     axios.get('https://ipinfo.io/json?token=19fe29175dd341')
       .then(response => {
         const city = response.data.city;
@@ -142,11 +164,10 @@ export default function App() {
     if (location.latitude && location.longitude) {
       api
         .get(
-          `data/2.5/onecall?lat=${location.latitude}&lon=${location.longitude}&units=metric&exclude=current,minutely,hourly,alerts&appid=${API_KEY}`
+          `/data/2.5/onecall?lat=${location.latitude}&lon=${location.longitude}&units=metric&exclude=current,minutely,hourly,alerts&appid=${API_KEY}`
         )
         .then((response) => {
           setWeatherState(response.data);
-
         })
         .catch((error) => {
           console.error('Error fetching weather data:', error);
@@ -163,11 +184,50 @@ export default function App() {
         .catch((error) => {
           console.error('Error fetching weather data:', error);
         });
+
+      // Faça uma chamada à API do OpenWeatherMap para obter informações sobre o nascer e pôr do sol
+      api.get(`/data/2.5/weather?lat=${location.latitude}&lon=${location.longitude}&appid=${API_KEY}`)
+        .then((response) => {
+          if (response.data.sys) {
+            const sunriseTimestamp = response.data.sys.sunrise;
+            const sunsetTimestamp = response.data.sys.sunset;
+
+            // Converta os timestamps em horários legíveis
+            const sunriseTime = new Date(sunriseTimestamp * 1000).toLocaleTimeString();
+            const sunsetTime = new Date(sunsetTimestamp * 1000).toLocaleTimeString();
+
+            // Atualize os estados com os horários do nascer e pôr do sol
+            setSunrise(sunriseTime);
+            setSunset(sunsetTime);
+
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching sunrise/sunset data:', error);
+        });
     }
 
 
 
   }, [location.latitude, location.longitude, searchCity]);
+
+  const date = new Date();
+  let hour = date.getHours();
+  let minute: number = date.getMinutes();
+  let minuteFormatted: string;
+
+  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Lembre-se de que os meses são base 0
+  const day = date.getDate().toString().padStart(2, '0');
+  const year = date.getFullYear();
+
+  const fullDate = `${month}/${day}/${year}`;
+
+  if (minute < 10) {
+    minuteFormatted = "0" + minute;
+  } else {
+    minuteFormatted = minute.toString(); // Converter para string se não for menor que 10
+  }
+
   return (
     <>
       <GlobalStyles />
@@ -175,7 +235,7 @@ export default function App() {
         {dataLoaded ? (
           <>
             <Sidebar
-
+              dataLoaded={dataLoaded}
               searchCityDelayed={searchCityDelayed}
               city={location.city}
               currentWeather={searchByCity.current || weather.current}
@@ -185,9 +245,19 @@ export default function App() {
             />
             {searchByCity.current && searchByCity.daily ? (
               <Section>
-                <header>
-                  <RoundButton isCelsiusButton>°C</RoundButton>
-                  <RoundButton>°F</RoundButton>
+               <header>
+                  <div >
+                    <RoundButton isCelsiusButton>°C</RoundButton>
+                    <RoundButton>°F</RoundButton>
+                  </div>
+                  <div style={{ display: 'block', textAlign: 'center' }}>
+                    <p >{fullDate}</p>
+                    <span>
+                      <p>Nascer do Sol: {sunrise}</p>
+                      <p>Pôr do Sol: {sunset}</p>
+                    </span>
+                  </div>
+                  <div>atual: {hour}:{minuteFormatted}</div>
                 </header>
                 <WeatherStateList daily={searchByCity.daily} />
                 <WeatherDetails
@@ -200,8 +270,18 @@ export default function App() {
             ) : (
               <Section>
                 <header>
-                  <RoundButton isCelsiusButton>°C</RoundButton>
-                  <RoundButton>°F</RoundButton>
+                  <div >
+                    <RoundButton isCelsiusButton>°C</RoundButton>
+                    <RoundButton>°F</RoundButton>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <p style={{ textAlign: 'center' }}>{fullDate}</p>
+                    <span>
+                      <p>Nascer do Sol: {sunrise}</p>
+                      <p>Pôr do Sol: {sunset}</p>
+                    </span>
+                  </div>
+                  <div>Última atualização: {hour}:{minuteFormatted}</div>
                 </header>
                 <WeatherStateList daily={weatherState.daily} />
                 <WeatherDetails
@@ -220,18 +300,18 @@ export default function App() {
 
         ) : (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-           <ThreeCircles
-  height="60"
-  width="60"
-  color="#51E5FF"
-  wrapperStyle={{}}
-  wrapperClass=""
-  visible={true}
-  ariaLabel="three-circles-rotating"
-  outerCircleColor=""
-  innerCircleColor=""
-  middleCircleColor=""
-/>
+            <ThreeCircles
+              height="60"
+              width="60"
+              color="#51E5FF"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+              ariaLabel="three-circles-rotating"
+              outerCircleColor=""
+              innerCircleColor=""
+              middleCircleColor=""
+            />
           </div>
 
         )}

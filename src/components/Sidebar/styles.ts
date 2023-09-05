@@ -19,13 +19,13 @@ export const Container = styled.aside`
   }
 `;
 export const ContainerInput = styled.div`
-   width: 45%;
+   width: 50%;
    display: flex;
    padding: 6px;
    border-radius: 10px;
    background: #a09fb1;
    
-   margin-inline: 20px;
+   margin-inline: 10px;
 
   button{
     display: flex;
@@ -37,7 +37,14 @@ export const ContainerInput = styled.div`
   button:hover{
     opacity: .9;
   }
-
+  div{
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+  }
+  @media (max-width: 700px) {
+    width: 85%;
+  }
   
 
 `
@@ -47,6 +54,7 @@ export const InputSearch = styled.input`
    outline: none;
    border: none;  
    padding: 6px;
+   text-transform: capitalize;
 `
 
 
@@ -88,7 +96,7 @@ export const City = styled.div`
   p {
     font-weight: 600;
     font-size: 1.125rem;
-    text-transform: uppercase;
+    text-transform: capitalize;
     
   }
 `;
