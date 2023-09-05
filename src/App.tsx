@@ -220,7 +220,7 @@ export default function App() {
   const day = date.getDate().toString().padStart(2, '0');
   const year = date.getFullYear();
 
-  const fullDate = `${month}/${day}/${year}`;
+  const fullDate = `${day}/${month}/${year}`;
 
   if (minute < 10) {
     minuteFormatted = "0" + minute;
@@ -243,19 +243,19 @@ export default function App() {
               handleSearchSubmit={handleSearchSubmit}
               searchCity={searchCity}
             />
+            <div className="slider">
+              <div >
+                <p>Nascer do Sol: {sunrise}</p> /
+                <p>Pôr do Sol: {sunset}</p> /
+                <p>{fullDate }</p>
+              </div>
+            </div>
             {searchByCity.current && searchByCity.daily ? (
               <Section>
-               <header>
+                <header>
                   <div >
                     <RoundButton isCelsiusButton>°C</RoundButton>
                     <RoundButton>°F</RoundButton>
-                  </div>
-                  <div style={{ display: 'block', textAlign: 'center' }}>
-                    <p >{fullDate}</p>
-                    <span>
-                      <p>Nascer do Sol: {sunrise}</p>
-                      <p>Pôr do Sol: {sunset}</p>
-                    </span>
                   </div>
                   <div>atual: {hour}:{minuteFormatted}</div>
                 </header>
@@ -274,13 +274,7 @@ export default function App() {
                     <RoundButton isCelsiusButton>°C</RoundButton>
                     <RoundButton>°F</RoundButton>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <p style={{ textAlign: 'center' }}>{fullDate}</p>
-                    <span>
-                      <p>Nascer do Sol: {sunrise}</p>
-                      <p>Pôr do Sol: {sunset}</p>
-                    </span>
-                  </div>
+
                   <div>Última atualização: {hour}:{minuteFormatted}</div>
                 </header>
                 <WeatherStateList daily={weatherState.daily} />

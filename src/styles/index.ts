@@ -7,6 +7,27 @@ export const Main = styled.main`
     font-size: 87.5%;
     
   }
+
+  .slider {
+    width: 100%; /* Defina a largura desejada para o slider */
+    overflow: hidden;
+    margin-top: 10px; 
+  }
+  
+  .slider > div {
+    display: flex;
+    gap: 10px;
+    animation: slide 40s linear infinite; /* 10s é a duração da animação, ajuste conforme necessário */
+  }
+  
+  @keyframes slide {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%); /* Desloca a div para a esquerda */
+    }
+  }
 `;
 
 export const Section = styled.section`
